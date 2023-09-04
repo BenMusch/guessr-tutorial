@@ -16,42 +16,63 @@ const initialViewState = {
 
 function GameplayMap() {
   const [guess, setGuess] = useState(null);
+  const [isGuessConfirmed, setIsGuessConfirmed] = useState(false);
   const station = _.sample(allStations);
 
   let guessMarker = null;
-  let guessMessage = null;
   if (guess !== null) {
     guessMarker = (
       <Marker longitude={guess.longitude} latitude={guess.latitude} />
     );
-    guessMessage = (
-      <p>
-        Current guess is at longitude={guess.longitude} latitude=
-        {guess.latitude}
-      </p>
+  }
+
+  let confirmGuessButton = null;
+  let stationMarker = null;
+  if (isGuessConfirmed) {
+    // only show the station once the user confirms their guess
+    stationMarker = (
+      <Marker
+        longitude={station.longitude}
+        latitude={station.latitude}
+        color="red"
+      />
+    );
+  } else {
+    confirmGuessButton = (
+      <button
+        onClick={() => {
+          setIsGuessConfirmed(true);
+        }}
+      >
+        Confirm
+      </button>
     );
   }
 
   return (
     <div>
       <h1>{station.name}</h1>
+
       <Map
         style={{ width: 800, height: 800 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         initialViewState={initialViewState}
-        maxZoom={12}
+        maxZoom={14}
         minZoom={8.5}
         onClick={(eventData) => {
-          setGuess({
-            longitude: eventData.lngLat.lng,
-            latitude: eventData.lngLat.lat,
-          });
+          if (!isGuessConfirmed) {
+            setGuess({
+              longitude: eventData.lngLat.lng,
+              latitude: eventData.lngLat.lat,
+            });
+          }
         }}
       >
         {guessMarker}
+        {stationMarker}
       </Map>
 
-      {guessMessage}
+      {confirmGuessButton}
     </div>
   );
 }
