@@ -3,7 +3,7 @@ import "./App.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useState } from "react";
-import { Map } from "react-map-gl";
+import { Map, Marker } from "react-map-gl";
 
 const initialViewState = {
   longitude: -71.0593,
@@ -13,14 +13,40 @@ const initialViewState = {
 
 function GameplayMap() {
   const [guess, setGuess] = useState(null);
+  let guessMarker = null;
+  let guessMessage = null;
+  if (guess !== null) {
+    guessMarker = (
+      <Marker longitude={guess.longitude} latitude={guess.latitude} />
+    );
+    guessMessage = (
+      <p>
+        Current guess is at longitude={guess.longitude} latitude=
+        {guess.latitude}
+      </p>
+    );
+  }
+
   return (
-    <Map
-      style={{ width: 600, height: 400 }}
-      mapStyle="mapbox://styles/mapbox/streets-v9"
-      initialViewState={initialViewState}
-      maxZoom={12}
-      minZoom={8.5}
-    />
+    <div>
+      <Map
+        style={{ width: 800, height: 800 }}
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        initialViewState={initialViewState}
+        maxZoom={12}
+        minZoom={8.5}
+        onClick={(eventData) => {
+          setGuess({
+            longitude: eventData.lngLat.lng,
+            latitude: eventData.lngLat.lat,
+          });
+        }}
+      >
+        {guessMarker}
+      </Map>
+
+      {guessMessage}
+    </div>
   );
 }
 
