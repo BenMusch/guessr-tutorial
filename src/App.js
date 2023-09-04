@@ -45,10 +45,10 @@ export function getScore(guess, actualLocation) {
   return Math.round((5000 / 15000 ** 2) * Math.max(15000 - distance, 0) ** 2);
 }
 
-function GameplayMap() {
+function GameplayMap(props) {
   const [guess, setGuess] = useState(null);
   const [isGuessConfirmed, setIsGuessConfirmed] = useState(false);
-  const station = _.sample(allStations);
+  const station = props.station;
 
   let guessMarker = null;
   if (guess !== null) {
@@ -60,7 +60,9 @@ function GameplayMap() {
   let confirmGuessButton = null;
   let stationMarker = null;
   let scoreDisplay = null;
+  let nextButton = null;
   if (isGuessConfirmed) {
+    const score = getScore(guess, station);
     // only show the station once the user confirms their guess
     stationMarker = (
       <Marker
@@ -69,7 +71,22 @@ function GameplayMap() {
         color="red"
       />
     );
-    scoreDisplay = <p>Score: {getScore(guess, station)}</p>;
+    scoreDisplay = <p>Score: {score}</p>;
+    nextButton = (
+      <button
+        onClick={() => {
+          setIsGuessConfirmed(false);
+          setGuess(null);
+          props.onNext({
+            latitude: guess.latitude,
+            longitude: guess.longitude,
+            score: score,
+          });
+        }}
+      >
+        Next round
+      </button>
+    );
   } else {
     confirmGuessButton = (
       <button
@@ -107,14 +124,45 @@ function GameplayMap() {
 
       {confirmGuessButton}
       {scoreDisplay}
+      {nextButton}
+    </div>
+  );
+}
+
+function Game(props) {
+  const stations = props.stations;
+  const [guesses, setGuesses] = useState([]);
+
+  const currentRound = guesses.length;
+  const currentStation = stations[currentRound];
+  let currentScore = 0;
+  for (const guess of guesses) {
+    currentScore += guess.score;
+  }
+
+  return (
+    <div>
+      <h3>Round {currentRound + 1} of 5</h3>
+      <h3>Score: {currentScore}</h3>
+      <GameplayMap
+        station={currentStation}
+        onNext={(guessData) => {
+          // this "..." in front of guesses is called the "spread operator",
+          // and it will take every element from the guesses list and add it into the array
+          // for example, [...[1, 2], 3] would result in [1, 2, 3]
+          setGuesses([...guesses, guessData]);
+        }}
+      />
     </div>
   );
 }
 
 function App() {
+  const stations = _.sampleSize(allStations, 5);
+
   return (
     <div>
-      <GameplayMap />
+      <Game stations={stations} />
     </div>
   );
 }
