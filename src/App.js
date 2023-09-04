@@ -140,6 +140,18 @@ function Game(props) {
     currentScore += guess.score;
   }
 
+  const isGameOver = guesses.length === 5;
+
+  if (isGameOver) {
+    return (
+      <div>
+        <h1>Game over!</h1>
+        <h1>Score: {currentScore}</h1>
+        <button onClick={() => window.location.reload()}>Play again</button>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h3>Round {currentRound + 1} of 5</h3>
