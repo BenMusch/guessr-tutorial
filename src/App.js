@@ -2,6 +2,7 @@ import "./App.css";
 
 import "mapbox-gl/dist/mapbox-gl.css";
 
+import _ from "lodash";
 import { useState } from "react";
 import { Map, Marker } from "react-map-gl";
 
@@ -15,6 +16,8 @@ const initialViewState = {
 
 function GameplayMap() {
   const [guess, setGuess] = useState(null);
+  const station = _.sample(allStations);
+
   let guessMarker = null;
   let guessMessage = null;
   if (guess !== null) {
@@ -31,6 +34,7 @@ function GameplayMap() {
 
   return (
     <div>
+      <h1>{station.name}</h1>
       <Map
         style={{ width: 800, height: 800 }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
