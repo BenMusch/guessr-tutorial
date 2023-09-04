@@ -225,7 +225,9 @@ function App() {
 
   return (
     <div>
-      <Game stations={stations} />
+      <center>
+        <Game stations={stations} />
+      </center>
     </div>
   );
 }
