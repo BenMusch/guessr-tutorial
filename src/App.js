@@ -5,6 +5,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useState } from "react";
 import { Map, Marker } from "react-map-gl";
 
+import allStations from "./data";
+
 const initialViewState = {
   longitude: -71.0593,
   latitude: 42.35,
