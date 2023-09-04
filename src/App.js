@@ -8,6 +8,57 @@ import { Map, Marker } from "react-map-gl";
 
 import allStations from "./data";
 
+const mapStyle = {
+  version: 8,
+  name: "Basic",
+  metadata: {
+    "mapbox:autocomposite": true,
+  },
+  sources: {
+    transit: {
+      url: "mapbox://mapbox.transit-v2",
+      type: "vector",
+    },
+    mapbox: {
+      url: "mapbox://mapbox.mapbox-streets-v7",
+      type: "vector",
+    },
+  },
+  sprite: "mapbox://sprites/mapbox/basic-v8",
+  glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  layers: [
+    {
+      id: "background",
+      type: "background",
+      paint: {
+        "background-color": "#e5e7eb",
+      },
+      interactive: true,
+    },
+    {
+      id: "landuse_park",
+      type: "fill",
+      source: "mapbox",
+      "source-layer": "landuse",
+      filter: ["==", "class", "park"],
+      paint: {
+        "fill-color": "#d1d5db",
+      },
+      interactive: true,
+    },
+    {
+      id: "water",
+      type: "fill",
+      source: "mapbox",
+      "source-layer": "water",
+      paint: {
+        "fill-color": "#9ca3af",
+      },
+      interactive: true,
+    },
+  ],
+};
+
 const initialViewState = {
   longitude: -71.0593,
   latitude: 42.35,
@@ -105,7 +156,7 @@ function GameplayMap(props) {
 
       <Map
         style={{ width: 800, height: 800 }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapStyle={mapStyle}
         initialViewState={initialViewState}
         maxZoom={14}
         minZoom={8.5}
